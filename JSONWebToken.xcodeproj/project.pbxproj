@@ -183,7 +183,7 @@
 		7148BE9C1BFE2FA400CD17E7 /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 		7148BEA01BFF0B0B00CD17E7 /* SecKeyUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecKeyUtils.swift; sourceTree = "<group>"; };
 		7148BEA21BFF6FF500CD17E7 /* ClaimValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClaimValidator.swift; sourceTree = "<group>"; };
-		71642F3A1D9BB138008BBA95 /* JSONWebToken.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = JSONWebToken.entitlements; sourceTree = "<group>"; };
+		71642F3A1D9BB138008BBA95 /* JSONWebToken.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = JSONWebToken.entitlements; path = ../JSONWebToken/JSONWebToken.entitlements; sourceTree = "<group>"; };
 		71642F3F1D9BB1F2008BBA95 /* TestContainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestContainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		71642F411D9BB1F2008BBA95 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		71642F431D9BB1F2008BBA95 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -192,8 +192,8 @@
 		71642F4B1D9BB1F2008BBA95 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		71642F4D1D9BB1F2008BBA95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		717ACFCE1BFB6842004E01D0 /* JSONWebToken.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JSONWebToken.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		717ACFD11BFB6842004E01D0 /* JSONWebToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSONWebToken.h; sourceTree = "<group>"; };
-		717ACFD31BFB6842004E01D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		717ACFD11BFB6842004E01D0 /* JSONWebToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSONWebToken.h; path = JSONWebToken/JSONWebToken.h; sourceTree = "<group>"; };
+		717ACFD31BFB6842004E01D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = JSONWebToken/Info.plist; sourceTree = "<group>"; };
 		717ACFD81BFB6842004E01D0 /* JSONWebTokenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JSONWebTokenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		717ACFDD1BFB6842004E01D0 /* RSASSA_PKCS1Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSASSA_PKCS1Tests.swift; sourceTree = "<group>"; };
 		717ACFDF1BFB6842004E01D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -312,6 +312,7 @@
 		71642F401D9BB1F2008BBA95 /* TestContainer */ = {
 			isa = PBXGroup;
 			children = (
+				71642F3A1D9BB138008BBA95 /* JSONWebToken.entitlements */,
 				71642F411D9BB1F2008BBA95 /* AppDelegate.swift */,
 				71642F431D9BB1F2008BBA95 /* ViewController.swift */,
 				71642F451D9BB1F2008BBA95 /* Main.storyboard */,
@@ -325,6 +326,8 @@
 		717ACFC41BFB6842004E01D0 = {
 			isa = PBXGroup;
 			children = (
+				717ACFD11BFB6842004E01D0 /* JSONWebToken.h */,
+				717ACFD31BFB6842004E01D0 /* Info.plist */,
 				717ACFD01BFB6842004E01D0 /* JSONWebToken */,
 				717ACFDC1BFB6842004E01D0 /* JSONWebTokenTests */,
 				719156991D1D3BE900FC55C9 /* JSONWebToken tvOS */,
@@ -349,8 +352,6 @@
 		717ACFD01BFB6842004E01D0 /* JSONWebToken */ = {
 			isa = PBXGroup;
 			children = (
-				717ACFD11BFB6842004E01D0 /* JSONWebToken.h */,
-				717ACFD31BFB6842004E01D0 /* Info.plist */,
 				717ACFE81BFB69EB004E01D0 /* JSONWebToken.swift */,
 				717ACFFE1BFC8393004E01D0 /* SignatureAlgorithm.swift */,
 				71EA699E1C0323320081AF85 /* TokenSigner.swift */,
@@ -360,9 +361,9 @@
 				71AF7F482474191A00DDF6C0 /* Data+hash.swift */,
 				717ACFF41BFB8113004E01D0 /* NSData+Base64URLEncoding.swift */,
 				7148BEA01BFF0B0B00CD17E7 /* SecKeyUtils.swift */,
-				71642F3A1D9BB138008BBA95 /* JSONWebToken.entitlements */,
 			);
-			path = JSONWebToken;
+			name = JSONWebToken;
+			path = Sources/JSONWebToken;
 			sourceTree = "<group>";
 		};
 		717ACFDC1BFB6842004E01D0 /* JSONWebTokenTests */ = {
