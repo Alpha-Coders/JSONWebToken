@@ -26,13 +26,13 @@ Swift library for decoding, validating, signing and verifying JWT
 ```swift
 import JSONWebToken
 
-let rawJWT : String
-let jwt : JSONWebToken = try JSONWebToken(string : rawJWT)
+let rawJWT: String
+let jwt: JSONWebToken = try JSONWebToken(string: rawJWT)
 
 //create the validator by combining other validators with the & or | operator
 let validator = RegisteredClaimValidator.expiration & 
 				RegisteredClaimValidator.notBefore.optional &
-				HMACSignature(secret: "secret".dataUsingEncoding(NSUTF8StringEncoding)!, hashFunction: .SHA256)
+				HMACSignature(secret: Data("secret".utf8), hashFunction: .sha256)
 /*
 - not expired
 - can be used now (optional : a jwt without nbf will be valid)
@@ -42,7 +42,7 @@ let validationResult = validator.validateToken(jwt)
 guard case ValidationResult.Success = validationResult else { return }
 
 //use the token and access the payload
-let issuer : String? = jwt.payload.issuer
+let issuer: String? = jwt.payload.issuer
 let customClaim = jwt.payload["customClaim"] as? String
 ```
 ## Sign
@@ -55,18 +55,18 @@ var payload = JSONWebToken.Payload()
 payload.issuer = "http://kreactive.com"
 payload.subject = "antoine"            
 payload.audience = ["com.kreactive.app"]
-payload.expiration = NSDate().dateByAddingTimeInterval(300)
-payload.notBefore = NSDate()
-payload.issuedAt = NSDate()
-payload.jwtIdentifier = NSUUID().UUIDString
+payload.expiration = Date().dateByAddingTimeInterval(300)
+payload.notBefore = Date()
+payload.issuedAt = Date()
+payload.jwtIdentifier =  UUID().uuidString
 payload["customClaim"] = "customClaim"
 
 //use HS256 to sign the token
-let signer = HMACSignature(secret: "secret".dataUsingEncoding(NSUTF8StringEncoding)!, hashFunction: .SHA256) 
+let signer = HMACSignature(secret: Data("secret".utf8), hashFunction: .sha256) 
 
 //build the token, signer is optional
-let jwt = try JSONWebToken(payload : payload, signer : signer)
-let rawJWT : String = jwt.rawString
+let jwt = try JSONWebToken(payload: payload, signer: signer)
+let rawJWT: String = jwt.rawString
 ```
 
 ## RSASSA-PKCS1-v1_5 Signature
@@ -74,48 +74,37 @@ let rawJWT : String = jwt.rawString
 #### Keys
 Keys are represented by the `RSAKey` struct, wrapping a `SecKeyRef`.
 The preferred way of importing **public keys** is to use a `DER-encoded X.509` certificate (.cer), and for **private keys** a `PKCS#12` (.p12) identity. 
-It's also possible to import raw representation of keys (X509, public pem, modulus/exponent ...) by using a keychain item import side effect. 
+It's also possible to import raw representation of keys (X509, public pem, modulus/exponent ...). 
 ```swift
-let certificateData : NSData = //DER-encoded X.509 certificate
-let publicKey : RSAKey = try RSAKey(certificateData : certificateData)
+let certificateData: Data = //DER-encoded X.509 certificate
+let publicKey: RSAKey = try RSAKey(certificateData: certificateData)
 ```
 
 ```swift
-let p12Data : NSData //PKCS #12–formatted identity data
-let identity : (publicKey : RSAKey, privateKey : RSAKey) = try RSAKey.keysFromPkcs12Identity(p12Data, passphrase : "pass")
+let p12Data: Data //PKCS #12–formatted identity data
+let identity: (publicKey: RSAKey, privateKey: RSAKey) = try RSAKey.keysFromPkcs12Identity(p12Data, passphrase: "pass")
 ```
 
 ```swift
-let keyData : NSData
-//import key into the keychain
-let key : RSAKey = try RSAKey.registerOrUpdateKey(keyData, tag : "keyTag")
+let keyData: Data
+let key: RSAKey = try RSAKey(keyData: keyData)
 ```
 
 ```swift
-let modulusData : NSData
-let exponentData : NSData
-//import key into the keychain
-let key : RSAKey = try RSAKey.registerOrUpdateKey(modulus : modulusData, exponent : exponentData, tag : "keyTag")
+let modulusData: Data
+let exponentData: Data
+let key: RSAKey = try RSAKey(modulus: modulusData, exponent: exponentData)
 ```
 
-Retrieve or delete key from the keychain :
-```swift
-//get registered key
-let key : RSAKey? = RSAKey.registeredKeyWithTag("keyTag")
-//remove
-RSAKey.removeKeyWithTag("keyTag")
-```
-
-A large part of the raw key import code is copied from the [Heimdall](https://github.com/henrinormak/Heimdall) library.
 #### Verify
 Use `RSAPKCS1Verifier` as validator to verify token signature :
 
 ```swift
-let jwt : JSONWebToken
-let publicKey : RSAKey
+let jwt: JSONWebToken
+let publicKey: RSAKey
 let validator = RegisteredClaimValidator.expiration & 
 				RegisteredClaimValidator.notBefore.optional &
-				RSAPKCS1Verifier(key : publicKey, hashFunction: .SHA256)
+				RSAPKCS1Verifier(key: publicKey, hashFunction: .sha256)
 				
 let validationResult = validator.validateToken(jwt)
 ...
@@ -124,19 +113,19 @@ let validationResult = validator.validateToken(jwt)
 Use `RSAPKCS1Signer` to generate signed token:
 
 ```swift
-let payload : JSONWebToken.Payload
-let privateKey : RSAKey
+let payload: JSONWebToken.Payload
+let privateKey: RSAKey
 
-let signer = RSAPKCS1Signer(hashFunction: .SHA256, key: privateKey)	
-let jwt = try JSONWebToken(payload : payload, signer : signer)
-let rawJWT : String = jwt.rawString
+let signer = RSAPKCS1Signer(hashFunction: .sha256, key: privateKey)	
+let jwt = try JSONWebToken(payload: payload, signer: signer)
+let rawJWT: String = jwt.rawString
 ...
 ```
 # Validation
 Validators (signature and claims) implement the protocol `JSONWebTokenValidatorType`
 ```swift
 public protocol JSONWebTokenValidatorType {
-    func validateToken(token : JSONWebToken) -> ValidationResult
+    func validateToken(token: JSONWebToken) -> ValidationResult
 }
 ```
 
@@ -148,19 +137,19 @@ public enum ValidationResult {
     case Success
     case Failure(ErrorType)
     
-    public var isValid : Bool
+    public var isValid: Bool
 }
 ```
 
 ## Claim validation
 You can implement a claim validator with the `ClaimValidator` struct :
 ```swift
-public struct ClaimValidator<T> : JSONWebTokenValidatorType {
+public struct ClaimValidator<T>: JSONWebTokenValidatorType {
 }
 ```
 
 ```swift
-let validator : ClaimValidator<Int> = ClaimValidator(key: "customClaim", transform: { (jsonValue : AnyObject) throws -> Int in
+let validator: ClaimValidator<Int> = ClaimValidator(key: "customClaim", transform: { (jsonValue: AnyObject) throws -> Int in
 	guard let numberValue = jsonValue as? NSNumber else {
 		throw ClaimValidatorError(message: "customClaim value \(jsonValue) is not the expected Number type")
 	}
@@ -173,9 +162,9 @@ All registered claims validators are implemented :
 - `RegisteredClaimValidator.issuer` : `iss` claim is defined and is a `String`
 - `RegisteredClaimValidator.subject` : `sub` claim is defined and is a `String` 
 - `RegisteredClaimValidator.audience` : `aud` claim is defined and is a `String` or `[String]`
-- `RegisteredClaimValidator.expiration` : `exp` claim is defined, is an `Integer` transformable to `NSDate`, and is after current date 
-- `RegisteredClaimValidator.notBefore` : `nbf` claim is defined, is an `Integer` transformable to `NSDate`, and is before current date 
-- `RegisteredClaimValidator.issuedAt` : `iat` claim is defined, is an `Integer` transformable to `NSDate`
+- `RegisteredClaimValidator.expiration` : `exp` claim is defined, is an `Integer` transformable to `Date`, and is after current date 
+- `RegisteredClaimValidator.notBefore` : `nbf` claim is defined, is an `Integer` transformable to `Date`, and is before current date 
+- `RegisteredClaimValidator.issuedAt` : `iat` claim is defined, is an `Integer` transformable to `Date`
 - `RegisteredClaimValidator.jwtIdentifier` : `jti` claim is defined and is a `String` 
 
 And it can be extended : 
@@ -188,9 +177,9 @@ let myIssuerValidator = RegisteredClaimValidator.issuer.withValidator { $0 == "k
 Implement the `SignatureValidator` protocol on any `class` or `struct` to add and unsupported signature algorithm validator.
  
 ```swift
-public protocol SignatureValidator : JSONWebTokenValidatorType {
-    func canVerifyWithSignatureAlgorithm(alg : SignatureAlgorithm) -> Bool
-    func verify(input : NSData, signature : NSData) -> Bool
+public protocol SignatureValidator: JSONWebTokenValidatorType {
+    func canVerifyWithSignatureAlgorithm(alg: SignatureAlgorithm) -> Bool
+    func verify(input: Data, signature: Data) -> Bool
 }
 ```
 
@@ -199,8 +188,8 @@ Implement the `TokenSigner` protocol on any `class` or `struct` to sign token wi
 
 ```swift
 public protocol TokenSigner {
-    var signatureAlgorithm : SignatureAlgorithm {get}
-    func sign(input : NSData) throws -> NSData
+    var signatureAlgorithm: SignatureAlgorithm {get}
+    func sign(input: Data) throws -> Data
 }
 ```
 
