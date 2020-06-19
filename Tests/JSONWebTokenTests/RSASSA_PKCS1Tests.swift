@@ -3,7 +3,6 @@
 //  JSONWebTokenTests
 //
 //  Created by Antoine Palazzolo on 17/11/15.
-//  Copyright © 2015 Antoine Palazzolo. All rights reserved.
 //
 
 import XCTest
@@ -89,9 +88,9 @@ class RSASSA_PKCS1Tests: XCTestCase {
         }
     }
     func testCertificateImport() {
-        let certificateData = try! Data(contentsOf: URL(fileURLWithPath: Bundle(for : type(of: self)).path(forResource: "TestCertificate", ofType: "cer")!))
+        let certificateData = try! Data(contentsOf: testDataURL(name: "TestCertificate", extension: "cer"))
         do {
-            let _ = try RSAKey(certificateData : certificateData)
+            let _ = try RSAKey(certificateData: certificateData)
         } catch {
             XCTFail("should not fail \(error)")
         }
